@@ -10,8 +10,10 @@ var (
 	ErrAuthFailed = errors.New("authorisation failure")
 	ErrVoidFailed = errors.New("void failure")
 	ErrCaptureFailed = errors.New("capture failure")
+	ErrRefundFailed = errors.New("refund failure")
 	ErrAutIDNotFound = errors.New("authorization id is not found")
 	ErrCaptureLimitExceeded = errors.New("capture failure, limit exceeded")
+	ErrRefundLimitExceeded = errors.New("refund failure, limit exceeded")
 
 	ErrCardNil = fmt.Errorf("%w: card must to be set",ErrValidation)
 	ErrCardName = fmt.Errorf("%w: card name is not valid",ErrValidation)
