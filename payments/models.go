@@ -26,6 +26,7 @@ type Transaction struct {
 	CheckedAmount 	 float64
 	Currency         currency.Unit
 	CreatedAt        time.Time
+	CardNumber string
 }
 
 type Card struct {
