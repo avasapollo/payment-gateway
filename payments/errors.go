@@ -10,6 +10,7 @@ var (
 	ErrAuthFailed = errors.New("authorisation failure")
 	ErrVoidFailed = errors.New("void failure")
 	ErrCaptureFailed = errors.New("capture failure")
+	ErrCardNotValid = errors.New("card is not valid")
 	ErrRefundFailed = errors.New("refund failure")
 	ErrAutIDNotFound = errors.New("authorization id is not found")
 	ErrCaptureLimitExceeded = errors.New("capture failure, limit exceeded")
