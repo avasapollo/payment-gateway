@@ -22,12 +22,12 @@ func (d TransactionStatus) String() string {
 }
 
 type Transaction struct {
-	AuthID        string
-	Status        TransactionStatus
-	Amount        *Amount
-	CurrentAmount *Amount
-	CreatedAt     time.Time
-	CardNumber    string
+	AuthorizationID string
+	Status          TransactionStatus
+	Amount          *Amount
+	CurrentAmount   *Amount
+	CreatedAt       time.Time
+	CardNumber      string
 }
 
 type Amount struct {
@@ -75,24 +75,24 @@ func (req *AuthorizeReq) Validate() error {
 }
 
 type VoidReq struct {
-	AuthID string
+	AuthorizationID string
 }
 
 func (r *VoidReq) Validate() error {
-	if r.AuthID == "" {
+	if r.AuthorizationID == "" {
 		return ErrAuthIDEmpty
 	}
 	return nil
 }
 
 type RefundReq struct {
-	AuthID string
-	Amount float64
+	AuthorizationID string
+	Amount          float64
 }
 
 func (r *RefundReq) Validate() error {
 	switch {
-	case r.AuthID == "":
+	case r.AuthorizationID == "":
 		return ErrAuthIDEmpty
 	case r.Amount <= 0:
 		return ErrAmountNotValid
@@ -101,13 +101,13 @@ func (r *RefundReq) Validate() error {
 }
 
 type CaptureReq struct {
-	AuthID string
-	Amount float64
+	AuthorizationID string
+	Amount          float64
 }
 
 func (r *CaptureReq) Validate() error {
 	switch {
-	case r.AuthID == "":
+	case r.AuthorizationID == "":
 		return ErrAuthIDEmpty
 	case r.Amount <= 0:
 		return ErrAmountNotValid

@@ -29,8 +29,8 @@ func (svc *Service) Authorize(ctx context.Context, req *payments.AuthorizeReq) (
 		return nil, payments.ErrAuthFailed
 	}
 	tr := payments.Transaction{
-		AuthID: uuid.NewString(),
-		Status: payments.Authorized,
+		AuthorizationID: uuid.NewString(),
+		Status:          payments.Authorized,
 		Amount: &payments.Amount{
 			Value:    req.Amount,
 			Currency: req.Currency,
@@ -43,12 +43,12 @@ func (svc *Service) Authorize(ctx context.Context, req *payments.AuthorizeReq) (
 		CardNumber: req.Card.CardNumber,
 	}
 
-	svc.transactions.Store(tr.AuthID, tr)
+	svc.transactions.Store(tr.AuthorizationID, tr)
 	return &tr, nil
 }
 
 func (svc *Service) Void(ctx context.Context, req *payments.VoidReq) (*payments.Transaction, error) {
-	value, ok := svc.transactions.Load(req.AuthID)
+	value, ok := svc.transactions.Load(req.AuthorizationID)
 	if !ok {
 		return nil, payments.ErrAutIDNotFound
 	}
@@ -58,12 +58,12 @@ func (svc *Service) Void(ctx context.Context, req *payments.VoidReq) (*payments.
 		return nil, payments.ErrVoidFailed
 	}
 	tr.Status = payments.Voided
-	svc.transactions.Store(req.AuthID, tr)
+	svc.transactions.Store(req.AuthorizationID, tr)
 	return &tr, nil
 }
 
 func (svc *Service) Capture(ctx context.Context, req *payments.CaptureReq) (*payments.Transaction, error) {
-	value, ok := svc.transactions.Load(req.AuthID)
+	value, ok := svc.transactions.Load(req.AuthorizationID)
 	if !ok {
 		return nil, payments.ErrAutIDNotFound
 	}
@@ -81,12 +81,12 @@ func (svc *Service) Capture(ctx context.Context, req *payments.CaptureReq) (*pay
 		return nil, payments.ErrCaptureLimitExceeded
 	}
 	tr.CurrentAmount.Value = amount
-	svc.transactions.Store(req.AuthID, tr)
+	svc.transactions.Store(req.AuthorizationID, tr)
 	return &tr, nil
 }
 
 func (svc *Service) Refund(ctx context.Context, req *payments.RefundReq) (*payments.Transaction, error) {
-	value, ok := svc.transactions.Load(req.AuthID)
+	value, ok := svc.transactions.Load(req.AuthorizationID)
 	if !ok {
 		return nil, payments.ErrAutIDNotFound
 	}
@@ -104,6 +104,6 @@ func (svc *Service) Refund(ctx context.Context, req *payments.RefundReq) (*payme
 		return nil, payments.ErrRefundLimitExceeded
 	}
 	tr.CurrentAmount.Value = amount
-	svc.transactions.Store(req.AuthID, tr)
+	svc.transactions.Store(req.AuthorizationID, tr)
 	return &tr, nil
 }

@@ -13,8 +13,8 @@ type Card struct {
 }
 
 type AuthorizeReq struct {
-	Card   *Card   `json:"card"`
-	Amount *Amount `json:"amount"`
+	Card   Card   `json:"card"`
+	Amount Amount `json:"amount"`
 }
 
 type VoidReq struct {

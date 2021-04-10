@@ -10,7 +10,7 @@ func toPaymentAuthorizeReq(req *AuthorizeReq) (*payments.AuthorizeReq, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &payments.AuthorizeReq{
+	r := &payments.AuthorizeReq{
 		Card: &payments.Card{
 			Name:        req.Card.Name,
 			CardNumber:  req.Card.CardNumber,
@@ -20,32 +20,33 @@ func toPaymentAuthorizeReq(req *AuthorizeReq) (*payments.AuthorizeReq, error) {
 		},
 		Amount:   req.Amount.Value,
 		Currency: cu,
-	}, nil
+	}
+	return r, nil
 }
 
-func toPaymentVodReq(req *VoidReq) *payments.VoidReq {
+func toPaymentVoidReq(req *VoidReq) *payments.VoidReq {
 	return &payments.VoidReq{
-		AuthID: req.AuthorizationID,
+		AuthorizationID: req.AuthorizationID,
 	}
 }
 
 func toPaymentCaptureReq(req *CaptureReq) *payments.CaptureReq {
 	return &payments.CaptureReq{
-		AuthID: req.AuthorizationID,
-		Amount: req.Amount,
+		AuthorizationID: req.AuthorizationID,
+		Amount:          req.Amount,
 	}
 }
 
 func toPaymentRefundReq(req *RefundReq) *payments.RefundReq {
 	return &payments.RefundReq{
-		AuthID: req.AuthorizationID,
-		Amount: req.Amount,
+		AuthorizationID: req.AuthorizationID,
+		Amount:          req.Amount,
 	}
 }
 
 func toAuthorizeResp(tr *payments.Transaction) *AuthorizeResp {
 	return &AuthorizeResp{
-		AuthorizationID: tr.AuthID,
+		AuthorizationID: tr.AuthorizationID,
 		Amount: &Amount{
 			Value:    tr.Amount.Value,
 			Currency: tr.Amount.Currency.String(),
