@@ -5,69 +5,78 @@ import (
 	"golang.org/x/text/currency"
 )
 
-func toPaymentAuthorizeReq(req *AuthorizeReq) (*payments.AuthorizeReq,error)  {
-	cu,err := currency.ParseISO(req.Currency)
-	if err!= nil {
-		return nil,err
+func toPaymentAuthorizeReq(req *AuthorizeReq) (*payments.AuthorizeReq, error) {
+	cu, err := currency.ParseISO(req.Amount.Currency)
+	if err != nil {
+		return nil, err
 	}
-	return &payments.AuthorizeReq{
-		Card:     &payments.Card{
+	r := &payments.AuthorizeReq{
+		Card: &payments.Card{
 			Name:        req.Card.Name,
 			CardNumber:  req.Card.CardNumber,
 			ExpireMonth: req.Card.ExpireMonth,
 			ExpireYear:  req.Card.ExpireYear,
-			CVV:        req.Card.CVV,
+			CVV:         req.Card.CVV,
 		},
-		Amount:   req.Amount,
+		Amount:   req.Amount.Value,
 		Currency: cu,
-	},nil
+	}
+	return r, nil
 }
 
-func toPaymentVodReq(req *VoidReq) *payments.VoidReq  {
+func toPaymentVoidReq(req *VoidReq) *payments.VoidReq {
 	return &payments.VoidReq{
-		AuthID: req.AuthorizationID,
+		AuthorizationID: req.AuthorizationID,
 	}
 }
 
-func toPaymentCaptureReq(req *CaptureReq) *payments.CaptureReq  {
+func toPaymentCaptureReq(req *CaptureReq) *payments.CaptureReq {
 	return &payments.CaptureReq{
-		AuthID: req.AuthorizationID,
-		Amount: req.Amount,
+		AuthorizationID: req.AuthorizationID,
+		Amount:          req.Amount,
 	}
 }
 
-func toPaymentRefundReq(req *RefundReq) *payments.RefundReq  {
+func toPaymentRefundReq(req *RefundReq) *payments.RefundReq {
 	return &payments.RefundReq{
-		AuthID: req.AuthorizationID,
-		Amount: req.Amount,
+		AuthorizationID: req.AuthorizationID,
+		Amount:          req.Amount,
 	}
 }
 
-func toAuthorizeResp(tr *payments.Transaction) *AuthorizeResp  {
+func toAuthorizeResp(tr *payments.Transaction) *AuthorizeResp {
 	return &AuthorizeResp{
-		AuthorizationID: tr.AuthID,
-		Amount:          tr.Amount,
-		Currency:        tr.Currency.String(),
+		AuthorizationID: tr.AuthorizationID,
+		Amount: &Amount{
+			Value:    tr.Amount.Value,
+			Currency: tr.Amount.Currency.String(),
+		},
 	}
 }
 
-func toVoidResp(tr *payments.Transaction) *VoidResp  {
+func toVoidResp(tr *payments.Transaction) *VoidResp {
 	return &VoidResp{
-		Amount:          tr.Amount,
-		Currency:        tr.Currency.String(),
+		Amount: &Amount{
+			Value:    tr.Amount.Value,
+			Currency: tr.Amount.Currency.String(),
+		},
 	}
 }
 
-func toCaptureResp(tr *payments.Transaction) *CaptureResp  {
+func toCaptureResp(tr *payments.Transaction) *CaptureResp {
 	return &CaptureResp{
-		Amount:          tr.Amount - tr.CheckedAmount,
-		Currency:        tr.Currency.String(),
+		Amount: &Amount{
+			Value:    tr.Amount.Value - tr.CurrentAmount.Value,
+			Currency: tr.Amount.Currency.String(),
+		},
 	}
 }
 
-func toRefundResp(tr *payments.Transaction) *RefundResp  {
+func toRefundResp(tr *payments.Transaction) *RefundResp {
 	return &RefundResp{
-		Amount:          tr.Amount - tr.CheckedAmount,
-		Currency:        tr.Currency.String(),
+		Amount: &Amount{
+			Value:    tr.CurrentAmount.Value,
+			Currency: tr.Amount.Currency.String(),
+		},
 	}
 }

@@ -1,48 +1,32 @@
 package web
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/http"
+	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestUnmarshalRequest(t *testing.T) {
-	t.Fatal("TODO")
-	type args struct {
-		r   *http.Request
-		dto interface{}
+	req := &CaptureReq{
+		AuthorizationID: "id_1",
+		Amount:          100,
 	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := UnmarshalRequest(tt.args.r, tt.args.dto); (err != nil) != tt.wantErr {
-				t.Errorf("UnmarshalRequest() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	b, err := json.Marshal(req)
+	require.NoError(t, err)
+	r, err := http.NewRequest(http.MethodPost, "http://localhost/v1/capture", bytes.NewBuffer(b))
+	require.NoError(t, err)
+	res := new(CaptureReq)
+	err = UnmarshalRequest(r, res)
+	require.NoError(t, err)
+	require.Equal(t, req, res)
 }
 
 func TestWriteResponse(t *testing.T) {
-	t.Fatal("TODO")
-
-	type args struct {
-		w    http.ResponseWriter
-		code int
-		dto  interface{}
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-		})
-	}
+	w := httptest.NewRecorder()
+	WriteResponse(w, http.StatusOK, nil)
+	require.Equal(t, http.StatusOK, w.Code)
 }
