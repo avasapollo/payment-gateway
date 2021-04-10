@@ -6,6 +6,7 @@ import (
 )
 
 func WriteResponse(w http.ResponseWriter, code int, dto interface{}) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(code)
 	if dto == nil {
 		return
