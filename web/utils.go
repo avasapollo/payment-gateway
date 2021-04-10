@@ -6,8 +6,8 @@ import (
 )
 
 func WriteResponse(w http.ResponseWriter, code int, dto interface{}) {
+	w.WriteHeader(code)
 	if dto == nil {
-		w.WriteHeader(code)
 		return
 	}
 	b, err := json.Marshal(dto)
@@ -19,7 +19,6 @@ func WriteResponse(w http.ResponseWriter, code int, dto interface{}) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(code)
 	return
 }
 

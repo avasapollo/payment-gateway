@@ -242,7 +242,7 @@ func Test_toRefundResp(t *testing.T) {
 			},
 			want: &RefundResp{
 				Amount: &Amount{
-					Value:    9,
+					Value:    1,
 					Currency: currency.EUR.String(),
 				},
 			},

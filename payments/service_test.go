@@ -24,8 +24,8 @@ func newTestSuite(ctrl *gomock.Controller) *testSuite {
 
 func TestService_Authorize(t *testing.T) {
 	tr := &Transaction{
-		AuthID: "transaction_id_1",
-		Status: Authorized,
+		AuthorizationID: "transaction_id_1",
+		Status:          Authorized,
 		Amount: &Amount{
 			Value:    100,
 			Currency: currency.EUR,
@@ -114,8 +114,8 @@ func TestService_Authorize(t *testing.T) {
 
 func TestService_Capture(t *testing.T) {
 	tr := &Transaction{
-		AuthID: "transaction_id_1",
-		Status: Captured,
+		AuthorizationID: "transaction_id_1",
+		Status:          Captured,
 		Amount: &Amount{
 			Value:    100,
 			Currency: currency.EUR,
@@ -145,8 +145,8 @@ func TestService_Capture(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				req: &CaptureReq{
-					AuthID: "",
-					Amount: 10,
+					AuthorizationID: "",
+					Amount:          10,
 				},
 			},
 			want: func(got *Transaction, err error) {
@@ -161,8 +161,8 @@ func TestService_Capture(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				req: &CaptureReq{
-					AuthID: "transaction_id_1",
-					Amount: 10,
+					AuthorizationID: "transaction_id_1",
+					Amount:          10,
 				},
 			},
 			want: func(got *Transaction, err error) {
@@ -191,8 +191,8 @@ func TestService_Capture(t *testing.T) {
 
 func TestService_Refund(t *testing.T) {
 	tr := &Transaction{
-		AuthID: "transaction_id_1",
-		Status: Refunded,
+		AuthorizationID: "transaction_id_1",
+		Status:          Refunded,
 		Amount: &Amount{
 			Value:    100,
 			Currency: currency.EUR,
@@ -222,8 +222,8 @@ func TestService_Refund(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				req: &RefundReq{
-					AuthID: "",
-					Amount: 10,
+					AuthorizationID: "",
+					Amount:          10,
 				},
 			},
 			want: func(got *Transaction, err error) {
@@ -238,8 +238,8 @@ func TestService_Refund(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				req: &RefundReq{
-					AuthID: "transaction_id_1",
-					Amount: 10,
+					AuthorizationID: "transaction_id_1",
+					Amount:          10,
 				},
 			},
 			want: func(got *Transaction, err error) {
@@ -268,8 +268,8 @@ func TestService_Refund(t *testing.T) {
 
 func TestService_Void(t *testing.T) {
 	tr := &Transaction{
-		AuthID: "transaction_id_1",
-		Status: Voided,
+		AuthorizationID: "transaction_id_1",
+		Status:          Voided,
 		Amount: &Amount{
 			Value:    100,
 			Currency: currency.EUR,
@@ -300,7 +300,7 @@ func TestService_Void(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				req: &VoidReq{
-					AuthID: "",
+					AuthorizationID: "",
 				},
 			},
 			want: func(got *Transaction, err error) {
@@ -315,7 +315,7 @@ func TestService_Void(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				req: &VoidReq{
-					AuthID: "transaction_id_1",
+					AuthorizationID: "transaction_id_1",
 				},
 			},
 			want: func(got *Transaction, err error) {

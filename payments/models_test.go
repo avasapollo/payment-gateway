@@ -9,9 +9,9 @@ import (
 )
 
 func TestAuthorizeReq_Validate(t *testing.T) {
-	getReq := func() *AuthorizeReq{
+	getReq := func() *AuthorizeReq {
 		return &AuthorizeReq{
-			Card:     &Card{
+			Card: &Card{
 				Name:        "Andrea Vasapollo",
 				CardNumber:  "4242424242424242",
 				ExpireMonth: "12",
@@ -23,8 +23,8 @@ func TestAuthorizeReq_Validate(t *testing.T) {
 		}
 	}
 	tests := []struct {
-		name    string
-		init  func(req *AuthorizeReq)
+		name string
+		init func(req *AuthorizeReq)
 		want func(err error)
 	}{
 		{
@@ -33,7 +33,7 @@ func TestAuthorizeReq_Validate(t *testing.T) {
 				req.Card = nil
 			},
 			want: func(err error) {
-				require.True(t,errors.Is(err,ErrCardNil))
+				require.True(t, errors.Is(err, ErrCardNil))
 			},
 		},
 		{
@@ -42,7 +42,7 @@ func TestAuthorizeReq_Validate(t *testing.T) {
 				req.Card.Name = ""
 			},
 			want: func(err error) {
-				require.True(t,errors.Is(err,ErrCardName))
+				require.True(t, errors.Is(err, ErrCardName))
 			},
 		},
 		{
@@ -51,7 +51,7 @@ func TestAuthorizeReq_Validate(t *testing.T) {
 				req.Card.CardNumber = ""
 			},
 			want: func(err error) {
-				require.True(t,errors.Is(err,ErrCardNotValid))
+				require.True(t, errors.Is(err, ErrCardNotValid))
 			},
 		},
 		{
@@ -60,7 +60,7 @@ func TestAuthorizeReq_Validate(t *testing.T) {
 				req.Amount = -10
 			},
 			want: func(err error) {
-				require.True(t,errors.Is(err,ErrAmountNotValid))
+				require.True(t, errors.Is(err, ErrAmountNotValid))
 			},
 		},
 		{
@@ -68,13 +68,13 @@ func TestAuthorizeReq_Validate(t *testing.T) {
 			init: func(req *AuthorizeReq) {
 			},
 			want: func(err error) {
-				require.NoError(t,err)
+				require.NoError(t, err)
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req :=getReq()
+			req := getReq()
 			tt.init(req)
 			err := req.Validate()
 			tt.want(err)
@@ -83,23 +83,23 @@ func TestAuthorizeReq_Validate(t *testing.T) {
 }
 
 func TestVoidReq_Validate(t *testing.T) {
-	getReq := func() *VoidReq{
+	getReq := func() *VoidReq {
 		return &VoidReq{
-			AuthID: "transaction_id_1",
+			AuthorizationID: "transaction_id_1",
 		}
 	}
 	tests := []struct {
-		name    string
-		init  func(req *VoidReq)
+		name string
+		init func(req *VoidReq)
 		want func(err error)
 	}{
 		{
 			name: "error auth_id empty",
 			init: func(req *VoidReq) {
-				req.AuthID = ""
+				req.AuthorizationID = ""
 			},
 			want: func(err error) {
-				require.True(t,errors.Is(err,ErrAuthIDEmpty))
+				require.True(t, errors.Is(err, ErrAuthIDEmpty))
 			},
 		},
 		{
@@ -107,13 +107,13 @@ func TestVoidReq_Validate(t *testing.T) {
 			init: func(req *VoidReq) {
 			},
 			want: func(err error) {
-				require.NoError(t,err)
+				require.NoError(t, err)
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r :=getReq()
+			r := getReq()
 			tt.init(r)
 			err := r.Validate()
 			tt.want(err)
@@ -122,24 +122,24 @@ func TestVoidReq_Validate(t *testing.T) {
 }
 
 func TestRefundReq_Validate(t *testing.T) {
-	getReq := func() *RefundReq{
+	getReq := func() *RefundReq {
 		return &RefundReq{
-			AuthID: "transaction_id_1",
-			Amount: 10,
+			AuthorizationID: "transaction_id_1",
+			Amount:          10,
 		}
 	}
 	tests := []struct {
-		name    string
-		init  func(req *RefundReq)
+		name string
+		init func(req *RefundReq)
 		want func(err error)
 	}{
 		{
 			name: "error auth_id empty",
 			init: func(req *RefundReq) {
-				req.AuthID = ""
+				req.AuthorizationID = ""
 			},
 			want: func(err error) {
-				require.True(t,errors.Is(err,ErrAuthIDEmpty))
+				require.True(t, errors.Is(err, ErrAuthIDEmpty))
 			},
 		},
 		{
@@ -148,7 +148,7 @@ func TestRefundReq_Validate(t *testing.T) {
 				req.Amount = -10
 			},
 			want: func(err error) {
-				require.True(t,errors.Is(err,ErrAmountNotValid))
+				require.True(t, errors.Is(err, ErrAmountNotValid))
 			},
 		},
 		{
@@ -156,13 +156,13 @@ func TestRefundReq_Validate(t *testing.T) {
 			init: func(req *RefundReq) {
 			},
 			want: func(err error) {
-				require.NoError(t,err)
+				require.NoError(t, err)
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r :=getReq()
+			r := getReq()
 			tt.init(r)
 			err := r.Validate()
 			tt.want(err)
@@ -171,24 +171,24 @@ func TestRefundReq_Validate(t *testing.T) {
 }
 
 func TestCaptureReq_Validate(t *testing.T) {
-	getReq := func() *CaptureReq{
+	getReq := func() *CaptureReq {
 		return &CaptureReq{
-			AuthID: "transaction_id_1",
-			Amount: 10,
+			AuthorizationID: "transaction_id_1",
+			Amount:          10,
 		}
 	}
 	tests := []struct {
-		name    string
-		init  func(req *CaptureReq)
+		name string
+		init func(req *CaptureReq)
 		want func(err error)
 	}{
 		{
 			name: "error auth_id empty",
 			init: func(req *CaptureReq) {
-				req.AuthID = ""
+				req.AuthorizationID = ""
 			},
 			want: func(err error) {
-				require.True(t,errors.Is(err,ErrAuthIDEmpty))
+				require.True(t, errors.Is(err, ErrAuthIDEmpty))
 			},
 		},
 		{
@@ -197,7 +197,7 @@ func TestCaptureReq_Validate(t *testing.T) {
 				req.Amount = -10
 			},
 			want: func(err error) {
-				require.True(t,errors.Is(err,ErrAmountNotValid))
+				require.True(t, errors.Is(err, ErrAmountNotValid))
 			},
 		},
 		{
@@ -205,13 +205,13 @@ func TestCaptureReq_Validate(t *testing.T) {
 			init: func(req *CaptureReq) {
 			},
 			want: func(err error) {
-				require.NoError(t,err)
+				require.NoError(t, err)
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r :=getReq()
+			r := getReq()
 			tt.init(r)
 			err := r.Validate()
 			tt.want(err)

@@ -64,7 +64,7 @@ func TestService_Authorize(t *testing.T) {
 				require.NoError(t, err)
 				require.NotEmpty(t, got.AuthorizationID)
 				require.Equal(t, payments.Authorized, got.Status)
-				require.Equal(t, float64(100), got.Amount)
+				require.Equal(t, float64(100), got.Amount.Value)
 				require.Equal(t, "4000000000000000", got.CardNumber)
 			},
 		},
@@ -259,8 +259,8 @@ func TestService_Capture(t *testing.T) {
 		tr, err = svc.Capture(ctx, captureReq)
 		require.NoError(t, err)
 		require.Equal(t, payments.Captured, tr.Status)
-		require.Equal(t, float64(100), tr.Amount)
-		require.Equal(t, float64(10), tr.CheckedAmount)
+		require.Equal(t, float64(100), tr.Amount.Value)
+		require.Equal(t, float64(10), tr.CurrentAmount.Value)
 	})
 
 	t.Run("ok 2 times", func(t *testing.T) {
@@ -287,8 +287,8 @@ func TestService_Capture(t *testing.T) {
 		tr, err = svc.Capture(ctx, captureReq)
 		require.NoError(t, err)
 		require.Equal(t, payments.Captured, tr.Status)
-		require.Equal(t, float64(100), tr.Amount)
-		require.Equal(t, float64(10), tr.CheckedAmount)
+		require.Equal(t, float64(100), tr.Amount.Value)
+		require.Equal(t, float64(10), tr.CurrentAmount.Value)
 
 		captureReq = &payments.CaptureReq{
 			AuthorizationID: tr.AuthorizationID,
@@ -298,8 +298,8 @@ func TestService_Capture(t *testing.T) {
 		tr, err = svc.Capture(ctx, captureReq)
 		require.NoError(t, err)
 		require.Equal(t, payments.Captured, tr.Status)
-		require.Equal(t, float64(100), tr.Amount)
-		require.Equal(t, float64(20), tr.CheckedAmount)
+		require.Equal(t, float64(100), tr.Amount.Value)
+		require.Equal(t, float64(20), tr.CurrentAmount.Value)
 	})
 }
 
@@ -391,7 +391,7 @@ func TestService_Refund(t *testing.T) {
 
 		tr, err = svc.Capture(ctx, captureReq)
 		require.NoError(t, err)
-		require.Equal(t, float64(10), tr.CheckedAmount)
+		require.Equal(t, float64(10), tr.CurrentAmount.Value)
 
 		refundReq := &payments.RefundReq{
 			AuthorizationID: tr.AuthorizationID,
@@ -424,7 +424,7 @@ func TestService_Refund(t *testing.T) {
 
 		tr, err = svc.Capture(ctx, captureReq)
 		require.NoError(t, err)
-		require.Equal(t, float64(10), tr.CheckedAmount)
+		require.Equal(t, float64(10), tr.CurrentAmount.Value)
 
 		refundReq := &payments.RefundReq{
 			AuthorizationID: tr.AuthorizationID,
@@ -433,8 +433,8 @@ func TestService_Refund(t *testing.T) {
 		tr, err = svc.Refund(ctx, refundReq)
 		require.NoError(t, err)
 		require.Equal(t, payments.Refunded, tr.Status)
-		require.Equal(t, float64(100), tr.Amount)
-		require.Equal(t, float64(1), tr.CheckedAmount)
+		require.Equal(t, float64(100), tr.Amount.Value)
+		require.Equal(t, float64(1), tr.CurrentAmount.Value)
 	})
 
 	t.Run("ok 2 times", func(t *testing.T) {
@@ -460,7 +460,7 @@ func TestService_Refund(t *testing.T) {
 
 		tr, err = svc.Capture(ctx, captureReq)
 		require.NoError(t, err)
-		require.Equal(t, float64(10), tr.CheckedAmount)
+		require.Equal(t, float64(10), tr.CurrentAmount.Value)
 
 		refundReq := &payments.RefundReq{
 			AuthorizationID: tr.AuthorizationID,
@@ -469,8 +469,8 @@ func TestService_Refund(t *testing.T) {
 		tr, err = svc.Refund(ctx, refundReq)
 		require.NoError(t, err)
 		require.Equal(t, payments.Refunded, tr.Status)
-		require.Equal(t, float64(100), tr.Amount)
-		require.Equal(t, float64(1), tr.CheckedAmount)
+		require.Equal(t, float64(100), tr.Amount.Value)
+		require.Equal(t, float64(1), tr.CurrentAmount.Value)
 
 		refundReq = &payments.RefundReq{
 			AuthorizationID: tr.AuthorizationID,
@@ -479,7 +479,7 @@ func TestService_Refund(t *testing.T) {
 		tr, err = svc.Refund(ctx, refundReq)
 		require.NoError(t, err)
 		require.Equal(t, payments.Refunded, tr.Status)
-		require.Equal(t, float64(100), tr.Amount)
-		require.Equal(t, float64(0), tr.CheckedAmount)
+		require.Equal(t, float64(100), tr.Amount.Value)
+		require.Equal(t, float64(0), tr.CurrentAmount.Value)
 	})
 }

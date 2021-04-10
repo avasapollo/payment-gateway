@@ -75,7 +75,7 @@ func toCaptureResp(tr *payments.Transaction) *CaptureResp {
 func toRefundResp(tr *payments.Transaction) *RefundResp {
 	return &RefundResp{
 		Amount: &Amount{
-			Value:    tr.Amount.Value - tr.CurrentAmount.Value,
+			Value:    tr.CurrentAmount.Value,
 			Currency: tr.Amount.Currency.String(),
 		},
 	}
