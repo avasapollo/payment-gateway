@@ -22,49 +22,53 @@ func (d TransactionStatus) String() string {
 }
 
 type Transaction struct {
-	AuthID           string
-	Status           TransactionStatus
-	Amount           float64
-	CheckedAmount 	 float64
-	Currency         currency.Unit
-	CreatedAt        time.Time
-	CardNumber string
+	AuthID        string
+	Status        TransactionStatus
+	Amount        *Amount
+	CurrentAmount *Amount
+	CreatedAt     time.Time
+	CardNumber    string
 }
 
-type Card struct {
-	Name 	   string
-	CardNumber string
-	ExpireMonth string
-	ExpireYear string
-	CVV string
-}
-
-type AuthorizeReq struct {
-	Card *Card
-	Amount float64
+type Amount struct {
+	Value    float64
 	Currency currency.Unit
 }
 
-func (req *AuthorizeReq) Validate() error  {
-	switch  {
-	case req.Card == nil :
+type Card struct {
+	Name        string
+	CardNumber  string
+	ExpireMonth string
+	ExpireYear  string
+	CVV         string
+}
+
+type AuthorizeReq struct {
+	Card     *Card
+	Amount   float64
+	Currency currency.Unit
+}
+
+func (req *AuthorizeReq) Validate() error {
+	switch {
+	case req.Card == nil:
 		return ErrCardNil
 	case req.Card.Name == "":
 		return ErrCardName
 	}
 
-	card :=  creditcard.Card{
-		Number:  req.Card.CardNumber,
-		Cvv:     req.Card.CVV,
-		Month:   req.Card.ExpireMonth,
-		Year:    req.Card.ExpireYear,
+	card := creditcard.Card{
+		Number: req.Card.CardNumber,
+		Cvv:    req.Card.CVV,
+		Month:  req.Card.ExpireMonth,
+		Year:   req.Card.ExpireYear,
 	}
 
-	if err:=  card.Validate(true);err != nil {
-		return fmt.Errorf("%w: %s",ErrCardNotValid,err.Error())
+	if err := card.Validate(true); err != nil {
+		return fmt.Errorf("%w: %s", ErrCardNotValid, err.Error())
 	}
 
-	if  req.Amount <= 0 {
+	if req.Amount <= 0 {
 		return ErrAmountNotValid
 	}
 	return nil
@@ -74,7 +78,7 @@ type VoidReq struct {
 	AuthID string
 }
 
-func (r *VoidReq) Validate() error  {
+func (r *VoidReq) Validate() error {
 	if r.AuthID == "" {
 		return ErrAuthIDEmpty
 	}
@@ -86,8 +90,8 @@ type RefundReq struct {
 	Amount float64
 }
 
-func (r *RefundReq) Validate() error  {
-	switch  {
+func (r *RefundReq) Validate() error {
+	switch {
 	case r.AuthID == "":
 		return ErrAuthIDEmpty
 	case r.Amount <= 0:
@@ -101,8 +105,8 @@ type CaptureReq struct {
 	Amount float64
 }
 
-func (r *CaptureReq) Validate() error  {
-	switch  {
+func (r *CaptureReq) Validate() error {
+	switch {
 	case r.AuthID == "":
 		return ErrAuthIDEmpty
 	case r.Amount <= 0:

@@ -8,7 +8,6 @@ import (
 )
 
 func Test_toPaymentAuthorizeReq(t *testing.T) {
-	t.Fatal("TODO")
 	type args struct {
 		req *AuthorizeReq
 	}
