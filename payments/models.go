@@ -11,23 +11,42 @@ import (
 type TransactionStatus int
 
 const (
-	Authorized TransactionStatus = iota
-	Voided
-	Captured
-	Refunded
+	Unknown TransactionStatus = iota
+	Authorize
+	Void
+	Capture
+	Refund
 )
 
+func ToTransactionStatus(s string) TransactionStatus {
+	switch s {
+	case Authorize.String():
+		return Authorize
+	case Void.String():
+		return Void
+	case Capture.String():
+		return Capture
+	case Refund.String():
+		return Refund
+	default:
+		return Unknown
+	}
+}
+
 func (d TransactionStatus) String() string {
-	return [...]string{"Authorized", "Voided", "Captured", "Refunded"}[d]
+	return [...]string{"Unknown", "Authorize", "Void", "Capture", "Refund"}[d]
 }
 
 type Transaction struct {
 	AuthorizationID string
+	CardNumber      string
 	Status          TransactionStatus
 	Amount          *Amount
+	CaptureAmount   *Amount
+	RefundAmount    *Amount
 	CurrentAmount   *Amount
 	CreatedAt       time.Time
-	CardNumber      string
+	UpdatedAt       time.Time
 }
 
 type Amount struct {

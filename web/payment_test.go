@@ -175,7 +175,7 @@ func TestPaymentApi_Authorize(t *testing.T) {
 			// TODO check all request details
 			tr := &payments.Transaction{
 				AuthorizationID: uuid.NewString(),
-				Status:          payments.Authorized,
+				Status:          payments.Authorize,
 				Amount: &payments.Amount{
 					Value:    req.Amount,
 					Currency: req.Currency,
@@ -301,7 +301,7 @@ func TestPaymentApi_Void(t *testing.T) {
 		mockPayment := NewMockPayment(ctrl)
 		tr := &payments.Transaction{
 			AuthorizationID: uuid.NewString(),
-			Status:          payments.Authorized,
+			Status:          payments.Authorize,
 			Amount: &payments.Amount{
 				Value:    100,
 				Currency: currency.EUR,
@@ -450,7 +450,7 @@ func TestPaymentApi_Capture(t *testing.T) {
 		defer ctrl.Finish()
 		tr := &payments.Transaction{
 			AuthorizationID: uuid.NewString(),
-			Status:          payments.Captured,
+			Status:          payments.Capture,
 			Amount: &payments.Amount{
 				Value:    100,
 				Currency: currency.EUR,
@@ -604,7 +604,7 @@ func TestPaymentApi_Refund(t *testing.T) {
 		defer ctrl.Finish()
 		tr := &payments.Transaction{
 			AuthorizationID: uuid.NewString(),
-			Status:          payments.Refunded,
+			Status:          payments.Refund,
 			Amount: &payments.Amount{
 				Value:    100,
 				Currency: currency.EUR,
