@@ -1,37 +1,91 @@
 package web
 
 import (
-	"fmt"
+	"context"
+	"net"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"github.com/gorilla/mux"
+	v1 "github.com/avasapollo/payment-gateway/web/proto/v1"
+	"google.golang.org/grpc/reflection"
+
+	// Update
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
 )
 
 type Server struct {
-	lgr *logrus.Entry
-	router *mux.Router
-	paymentApi *PaymentApi
+	lgr                  *logrus.Entry
+	grpcServer           *grpc.Server
+	httpServer           *http.ServeMux
+	paymentGatewayServer v1.PaymentGatewayServer
 }
 
-func NewServer(payment Payment) *Server  {
+func NewServer(payment Payment) *Server {
 	return &Server{
-		lgr:        logrus.WithField("pkg","web"),
-		router:     mux.NewRouter(),
-		paymentApi: newPaymentApi(payment),
+		lgr:                  logrus.WithField("pkg", "web"),
+		grpcServer:           grpc.NewServer(),
+		httpServer:           http.NewServeMux(),
+		paymentGatewayServer: NewPaymentGatewayService(payment),
 	}
 }
 
-func (srv *Server) Health(w http.ResponseWriter, r *http.Request) {
-	resp := &HealthResp{Status: "UP"}
-	WriteResponse(w,http.StatusOK,resp)
+func (srv *Server) ListenAndServe() error {
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		return err
+	}
+
+	jsonpb := &runtime.JSONPb{
+		EmitDefaults: true,
+		Indent:       "  ",
+		OrigName:     true,
+	}
+
+	mux := runtime.NewServeMux(
+		runtime.WithMarshalerOption(runtime.MIMEWildcard, jsonpb),
+		runtime.WithProtoErrorHandler(runtime.DefaultHTTPProtoErrorHandler),
+	)
+
+	opts := []grpc.DialOption{
+		grpc.WithInsecure(),
+	}
+
+	v1.RegisterPaymentGatewayServer(srv.grpcServer, srv.paymentGatewayServer)
+	reflection.Register(srv.grpcServer)
+
+	go srv.grpcServer.Serve(lis)
+	go waitForGracefulShutdown(srv.grpcServer)
+
+	if err := v1.RegisterPaymentGatewayHandlerFromEndpoint(ctx, mux, "localhost:50051", opts); err != nil {
+		return err
+	}
+	srv.httpServer.Handle("/", mux)
+	return http.ListenAndServe(":8080", srv.httpServer)
 }
 
-func (srv *Server) ListenServer(port int)  {
-	srv.router.HandleFunc("/health",srv.Health).Methods(http.MethodGet)
-	srv.router.HandleFunc("/v1/authorize",srv.paymentApi.Authorize).Methods(http.MethodPost)
-	srv.router.HandleFunc("/v1/void",srv.paymentApi.Void).Methods(http.MethodPost)
-	srv.router.HandleFunc("/v1/capture",srv.paymentApi.Capture).Methods(http.MethodPost)
-	srv.router.HandleFunc("/v1/refund",srv.paymentApi.Refund).Methods(http.MethodPost)
-	srv.lgr.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), srv.router))
+func waitForGracefulShutdown(srv *grpc.Server) {
+	lgr := logrus.WithField("pkg", "web")
+	lgr.Info("Grpc messaging server started ...")
+	interruptChan := make(chan os.Signal, 1)
+	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	// Block until we receive our signal.
+	<-interruptChan
+
+	// Create a deadline to wait for.
+	_, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+	srv.GracefulStop()
+
+	lgr.Info("Shutting down grpc messaging server.")
+	os.Exit(0)
 }

@@ -15,5 +15,5 @@ func main() {
 	}
 	paymentSvc := payments.New(storage)
 	srv := web.NewServer(paymentSvc)
-	srv.ListenServer(8080)
+	lgr.Fatal(srv.ListenAndServe())
 }
