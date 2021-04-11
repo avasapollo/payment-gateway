@@ -1,0 +1,19 @@
+version: "2"
+services:
+  app:
+    container_name: payment-gateway
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    links:
+      - mongo
+    environment:
+      - MONGODB_URL=mongodb://mongo:27017
+      - MONGODB_DATABASE_NAME:payment-gateway
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - "27017:27017"
