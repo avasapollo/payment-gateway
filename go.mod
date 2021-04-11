@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/durango/go-credit-card v0.0.0-20200501133251-afc6bc77117d
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/mock v1.5.0
 	github.com/golang/protobuf v1.4.2
 	github.com/google/uuid v1.2.0

@@ -68,6 +68,9 @@ func (srv *Server) ListenAndServe() error {
 	if err := v1.RegisterPaymentGatewayHandlerFromEndpoint(ctx, mux, "localhost:50051", opts); err != nil {
 		return err
 	}
+	srv.httpServer.HandleFunc("/swagger/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/proto/v1/payment-gateway.swagger.json")
+	})
 	srv.httpServer.Handle("/", mux)
 	return http.ListenAndServe(":8080", srv.httpServer)
 }
