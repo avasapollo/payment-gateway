@@ -193,7 +193,11 @@ func Test_toCaptureResp(t *testing.T) {
 						Value:    10,
 						Currency: currency.EUR,
 					},
-					CurrentAmount: &payments.Amount{
+					CaptureAmount: &payments.Amount{
+						Value:    9,
+						Currency: currency.EUR,
+					},
+					RefundAmount: &payments.Amount{
 						Value:    1,
 						Currency: currency.EUR,
 					},
@@ -234,7 +238,11 @@ func Test_toRefundResp(t *testing.T) {
 						Value:    10,
 						Currency: currency.EUR,
 					},
-					CurrentAmount: &payments.Amount{
+					CaptureAmount: &payments.Amount{
+						Value:    9,
+						Currency: currency.EUR,
+					},
+					RefundAmount: &payments.Amount{
 						Value:    1,
 						Currency: currency.EUR,
 					},
@@ -275,8 +283,12 @@ func Test_toVoidResp(t *testing.T) {
 						Value:    10,
 						Currency: currency.EUR,
 					},
-					CurrentAmount: &payments.Amount{
-						Value:    0,
+					CaptureAmount: &payments.Amount{
+						Value:    9,
+						Currency: currency.EUR,
+					},
+					RefundAmount: &payments.Amount{
+						Value:    1,
 						Currency: currency.EUR,
 					},
 				},

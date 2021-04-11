@@ -25,17 +25,22 @@ func newTestSuite(ctrl *gomock.Controller) *testSuite {
 func TestService_Authorize(t *testing.T) {
 	tr := &Transaction{
 		AuthorizationID: "transaction_id_1",
-		Status:          Authorized,
+		CardNumber:      "4242424242424242",
+		Status:          Authorize,
 		Amount: &Amount{
 			Value:    100,
 			Currency: currency.EUR,
 		},
-		CurrentAmount: &Amount{
+		CaptureAmount: &Amount{
+			Value:    100,
+			Currency: currency.EUR,
+		},
+		RefundAmount: &Amount{
 			Value:    0,
 			Currency: currency.EUR,
 		},
-		CreatedAt:  time.Now().UTC(),
-		CardNumber: "4242424242424242",
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Time{},
 	}
 	type args struct {
 		ctx context.Context
@@ -115,12 +120,16 @@ func TestService_Authorize(t *testing.T) {
 func TestService_Capture(t *testing.T) {
 	tr := &Transaction{
 		AuthorizationID: "transaction_id_1",
-		Status:          Captured,
+		Status:          Capture,
 		Amount: &Amount{
 			Value:    100,
 			Currency: currency.EUR,
 		},
-		CurrentAmount: &Amount{
+		CaptureAmount: &Amount{
+			Value:    90,
+			Currency: currency.EUR,
+		},
+		RefundAmount: &Amount{
 			Value:    10,
 			Currency: currency.EUR,
 		},
@@ -192,12 +201,16 @@ func TestService_Capture(t *testing.T) {
 func TestService_Refund(t *testing.T) {
 	tr := &Transaction{
 		AuthorizationID: "transaction_id_1",
-		Status:          Refunded,
+		Status:          Refund,
 		Amount: &Amount{
 			Value:    100,
 			Currency: currency.EUR,
 		},
-		CurrentAmount: &Amount{
+		CaptureAmount: &Amount{
+			Value:    10,
+			Currency: currency.EUR,
+		},
+		RefundAmount: &Amount{
 			Value:    0,
 			Currency: currency.EUR,
 		},
@@ -269,13 +282,17 @@ func TestService_Refund(t *testing.T) {
 func TestService_Void(t *testing.T) {
 	tr := &Transaction{
 		AuthorizationID: "transaction_id_1",
-		Status:          Voided,
+		Status:          Void,
 		Amount: &Amount{
 			Value:    100,
 			Currency: currency.EUR,
 		},
-		CurrentAmount: &Amount{
+		CaptureAmount: &Amount{
 			Value:    100,
+			Currency: currency.EUR,
+		},
+		RefundAmount: &Amount{
+			Value:    0,
 			Currency: currency.EUR,
 		},
 		CreatedAt:  time.Now().UTC(),
