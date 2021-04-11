@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package payment.gateway.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+
+option go_package = "web/proto/v1";
+
+message HealthResp {
+    string status = 1;
+}
+
+message Card {
+    string name = 1;
+    string card_number = 2;
+    string expire_month = 3;
+    string expire_year = 4;
+    string cvv = 5;
+}
+
+message Amount {
+    double value = 1;
+    string currency = 2;
+}
+
+message AuthorizeReq {
+    Card card = 1;
+    Amount amount = 2;
+}
+
+message AuthorizeResp {
+    string result = 1;
+    string authorization_id = 2;
+    Amount amount = 3;
+}
+
+message AmountResp {
+    string result = 1;
+    Amount amount = 2;
+}
+
+message VoidReq {
+    string authorization_id = 1;
+}
+
+message CaptureReq {
+    string authorization_id = 1;
+    double amount = 2;
+}
+
+message RefundReq {
+    string authorization_id = 1;
+    double amount = 2;
+}
+
+service PaymentGateway {
+    rpc Health(google.protobuf.Empty) returns(HealthResp) {
+        option (google.api.http) = {
+            get:"/health"
+        };
+    }
+    rpc Authorize(AuthorizeReq) returns(AuthorizeResp) {
+        option (google.api.http) = {
+            post:"/v1/authorize"
+            body:"*"
+        };
+    }
+    rpc Void(VoidReq) returns(AmountResp) {
+        option (google.api.http) = {
+            post:"/v1/void"
+            body:"*"
+        };
+    }
+    rpc Capture(CaptureReq) returns(AmountResp) {
+        option (google.api.http) = {
+            post:"/v1/capture"
+            body:"*"
+        };
+    }
+    rpc Refund(RefundReq) returns(AmountResp) {
+        option (google.api.http) = {
+            post:"/v1/refund"
+            body:"*"
+        };
+    }
+}

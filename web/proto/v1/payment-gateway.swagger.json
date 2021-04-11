@@ -1,0 +1,249 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "web/proto/v1/payment-gateway.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "Health",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1HealthResp"
+            }
+          }
+        },
+        "tags": [
+          "PaymentGateway"
+        ]
+      }
+    },
+    "/v1/authorize": {
+      "post": {
+        "operationId": "Authorize",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AuthorizeResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1AuthorizeReq"
+            }
+          }
+        ],
+        "tags": [
+          "PaymentGateway"
+        ]
+      }
+    },
+    "/v1/capture": {
+      "post": {
+        "operationId": "Capture",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AmountResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CaptureReq"
+            }
+          }
+        ],
+        "tags": [
+          "PaymentGateway"
+        ]
+      }
+    },
+    "/v1/refund": {
+      "post": {
+        "operationId": "Refund",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AmountResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RefundReq"
+            }
+          }
+        ],
+        "tags": [
+          "PaymentGateway"
+        ]
+      }
+    },
+    "/v1/void": {
+      "post": {
+        "operationId": "Void",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AmountResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1VoidReq"
+            }
+          }
+        ],
+        "tags": [
+          "PaymentGateway"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "v1Amount": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number",
+          "format": "double"
+        },
+        "currency": {
+          "type": "string"
+        }
+      }
+    },
+    "v1AmountResp": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/definitions/v1Amount"
+        }
+      }
+    },
+    "v1AuthorizeReq": {
+      "type": "object",
+      "properties": {
+        "card": {
+          "$ref": "#/definitions/v1Card"
+        },
+        "amount": {
+          "$ref": "#/definitions/v1Amount"
+        }
+      }
+    },
+    "v1AuthorizeResp": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "string"
+        },
+        "authorization_id": {
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/definitions/v1Amount"
+        }
+      }
+    },
+    "v1CaptureReq": {
+      "type": "object",
+      "properties": {
+        "authorization_id": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "v1Card": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "card_number": {
+          "type": "string"
+        },
+        "expire_month": {
+          "type": "string"
+        },
+        "expire_year": {
+          "type": "string"
+        },
+        "cvv": {
+          "type": "string"
+        }
+      }
+    },
+    "v1HealthResp": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "v1RefundReq": {
+      "type": "object",
+      "properties": {
+        "authorization_id": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "v1VoidReq": {
+      "type": "object",
+      "properties": {
+        "authorization_id": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
