@@ -44,7 +44,6 @@ type Transaction struct {
 	Amount          *Amount
 	CaptureAmount   *Amount
 	RefundAmount    *Amount
-	CurrentAmount   *Amount
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 }

@@ -180,7 +180,11 @@ func TestPaymentApi_Authorize(t *testing.T) {
 					Value:    req.Amount,
 					Currency: req.Currency,
 				},
-				CurrentAmount: &payments.Amount{
+				CaptureAmount: &payments.Amount{
+					Value:    req.Amount,
+					Currency: req.Currency,
+				},
+				RefundAmount: &payments.Amount{
 					Value:    0,
 					Currency: req.Currency,
 				},
@@ -306,7 +310,11 @@ func TestPaymentApi_Void(t *testing.T) {
 				Value:    100,
 				Currency: currency.EUR,
 			},
-			CurrentAmount: &payments.Amount{
+			CaptureAmount: &payments.Amount{
+				Value:    100,
+				Currency: currency.EUR,
+			},
+			RefundAmount: &payments.Amount{
 				Value:    0,
 				Currency: currency.EUR,
 			},
@@ -449,13 +457,16 @@ func TestPaymentApi_Capture(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 		tr := &payments.Transaction{
-			AuthorizationID: uuid.NewString(),
-			Status:          payments.Capture,
+			AuthorizationID: "id_1",
 			Amount: &payments.Amount{
-				Value:    100,
+				Value:    10,
 				Currency: currency.EUR,
 			},
-			CurrentAmount: &payments.Amount{
+			CaptureAmount: &payments.Amount{
+				Value:    0,
+				Currency: currency.EUR,
+			},
+			RefundAmount: &payments.Amount{
 				Value:    10,
 				Currency: currency.EUR,
 			},
@@ -484,7 +495,7 @@ func TestPaymentApi_Capture(t *testing.T) {
 		got := new(CaptureResp)
 		err = json.NewDecoder(w.Body).Decode(got)
 		require.NoError(t, err)
-		require.Equal(t, float64(90), got.Amount.Value)
+		require.Equal(t, float64(0), got.Amount.Value)
 		require.Equal(t, "EUR", got.Amount.Currency)
 	})
 }
@@ -603,14 +614,18 @@ func TestPaymentApi_Refund(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 		tr := &payments.Transaction{
-			AuthorizationID: uuid.NewString(),
+			AuthorizationID: "id_1",
 			Status:          payments.Refund,
 			Amount: &payments.Amount{
-				Value:    100,
+				Value:    10,
 				Currency: currency.EUR,
 			},
-			CurrentAmount: &payments.Amount{
-				Value:    10,
+			CaptureAmount: &payments.Amount{
+				Value:    0,
+				Currency: currency.EUR,
+			},
+			RefundAmount: &payments.Amount{
+				Value:    0,
 				Currency: currency.EUR,
 			},
 			CreatedAt:  time.Now().UTC().Truncate(time.Millisecond),
@@ -638,7 +653,7 @@ func TestPaymentApi_Refund(t *testing.T) {
 		got := new(RefundResp)
 		err = json.NewDecoder(w.Body).Decode(got)
 		require.NoError(t, err)
-		require.Equal(t, float64(10), got.Amount.Value)
+		require.Equal(t, float64(0), got.Amount.Value)
 		require.Equal(t, "EUR", got.Amount.Currency)
 	})
 }
