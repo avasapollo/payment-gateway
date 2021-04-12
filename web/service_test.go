@@ -126,7 +126,7 @@ func TestPaymentGatewayService_Authorize(t *testing.T) {
 		require.Equal(t, codes.InvalidArgument, status.Code(err))
 	})
 
-	t.Run("error permission denied", func(t *testing.T) {
+	t.Run("error edge case", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 		req := getAuthReq()
@@ -139,7 +139,7 @@ func TestPaymentGatewayService_Authorize(t *testing.T) {
 		svc := NewPaymentGatewayService(payment)
 
 		_, err := svc.Authorize(context.Background(), req)
-		require.Equal(t, codes.PermissionDenied, status.Code(err))
+		require.Equal(t, codes.InvalidArgument, status.Code(err))
 	})
 
 	t.Run("error internal", func(t *testing.T) {
@@ -218,7 +218,7 @@ func TestPaymentGatewayService_Void(t *testing.T) {
 		require.Equal(t, codes.InvalidArgument, status.Code(err))
 	})
 
-	t.Run("error permission denied", func(t *testing.T) {
+	t.Run("error edge case", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 		req := getVoidReq()
@@ -230,7 +230,7 @@ func TestPaymentGatewayService_Void(t *testing.T) {
 		svc := NewPaymentGatewayService(payment)
 
 		_, err := svc.Void(context.Background(), req)
-		require.Equal(t, codes.PermissionDenied, status.Code(err))
+		require.Equal(t, codes.InvalidArgument, status.Code(err))
 	})
 
 	t.Run("error internal", func(t *testing.T) {
@@ -308,7 +308,7 @@ func TestPaymentGatewayService_Capture(t *testing.T) {
 		require.Equal(t, codes.InvalidArgument, status.Code(err))
 	})
 
-	t.Run("error permission denied", func(t *testing.T) {
+	t.Run("error edge case", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 		req := getCaptureReq()
@@ -321,7 +321,7 @@ func TestPaymentGatewayService_Capture(t *testing.T) {
 		svc := NewPaymentGatewayService(payment)
 
 		_, err := svc.Capture(context.Background(), req)
-		require.Equal(t, codes.PermissionDenied, status.Code(err))
+		require.Equal(t, codes.InvalidArgument, status.Code(err))
 	})
 
 	t.Run("error internal", func(t *testing.T) {
@@ -400,7 +400,7 @@ func TestPaymentGatewayService_Refund(t *testing.T) {
 		require.Equal(t, codes.InvalidArgument, status.Code(err))
 	})
 
-	t.Run("error permission denied", func(t *testing.T) {
+	t.Run("error edge case", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 		req := getRefundReq()
@@ -413,7 +413,7 @@ func TestPaymentGatewayService_Refund(t *testing.T) {
 		svc := NewPaymentGatewayService(payment)
 
 		_, err := svc.Refund(context.Background(), req)
-		require.Equal(t, codes.PermissionDenied, status.Code(err))
+		require.Equal(t, codes.InvalidArgument, status.Code(err))
 	})
 
 	t.Run("error internal", func(t *testing.T) {
