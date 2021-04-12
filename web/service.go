@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// assertion the interface PaymentGatewayServer to PaymentGatewayService
 var _ v1.PaymentGatewayServer = (*PaymentGatewayService)(nil)
 
 type PaymentGatewayService struct {
