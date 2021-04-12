@@ -71,7 +71,7 @@ func (p *PaymentGatewayService) Authorize(ctx context.Context, req *v1.Authorize
 		case errors.Is(err, payments.ErrValidation):
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		case errors.Is(err, payments.ErrAuthFailed):
-			return nil, status.Error(codes.PermissionDenied, err.Error())
+			return nil, status.Error(codes.InvalidArgument, err.Error())
 		default:
 			return nil, status.Error(codes.Internal, err.Error())
 		}
@@ -98,7 +98,7 @@ func (p *PaymentGatewayService) Void(ctx context.Context, req *v1.VoidReq) (*v1.
 		case errors.Is(err, payments.ErrValidation):
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		case errors.Is(err, payments.ErrVoidFailed):
-			return nil, status.Error(codes.PermissionDenied, err.Error())
+			return nil, status.Error(codes.InvalidArgument, err.Error())
 		default:
 			return nil, status.Error(codes.Internal, err.Error())
 		}
@@ -125,7 +125,7 @@ func (p *PaymentGatewayService) Capture(ctx context.Context, req *v1.CaptureReq)
 		case errors.Is(err, payments.ErrValidation):
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		case errors.Is(err, payments.ErrCaptureFailed):
-			return nil, status.Error(codes.PermissionDenied, err.Error())
+			return nil, status.Error(codes.InvalidArgument, err.Error())
 		default:
 			return nil, status.Error(codes.Internal, err.Error())
 		}
@@ -152,7 +152,7 @@ func (p *PaymentGatewayService) Refund(ctx context.Context, req *v1.RefundReq) (
 		case errors.Is(err, payments.ErrValidation):
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		case errors.Is(err, payments.ErrRefundFailed):
-			return nil, status.Error(codes.PermissionDenied, err.Error())
+			return nil, status.Error(codes.InvalidArgument, err.Error())
 		default:
 			return nil, status.Error(codes.Internal, err.Error())
 		}
