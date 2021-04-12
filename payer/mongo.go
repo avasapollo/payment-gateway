@@ -14,8 +14,10 @@ import (
 
 const collTransactions = "transactions"
 
+// assertion the interface Payer to MongoPayer
 var _ payments.Payer = (*MongoPayer)(nil)
 
+// Options to customize the MongoDB connection
 type Options struct {
 	config *Config
 }
@@ -34,12 +36,14 @@ func WithMongoDBDatabaseName(dbName string) Option {
 	}
 }
 
+// Config to customize the MongoDB connection
 type Config struct {
 	MongoDBUrl   string `envconfig:"MONGODB_URL" default:"mongodb://localhost:27017"`
 	DatabaseName string `envconfig:"MONGODB_DATABASE_NAME" default:"payment-gateway"`
 	MaxPoolSize  uint64 `envconfig:"MONGODB_MAX_POOL_SIZE" default:"50"`
 }
 
+// defaultOptions to set the default connection to MongoDB
 func defaultOptions() *Options {
 	c := new(Config)
 	_ = envconfig.Process("", c)
@@ -143,7 +147,7 @@ func (m *MongoPayer) Capture(ctx context.Context, req *payments.CaptureReq) (*pa
 		return nil, err
 	}
 	if dto.CardNumber == "4000000000000259" {
-		// TODO: think roll back
+		// TODO: think roll back the operation
 		return nil, payments.ErrCaptureFailed
 	}
 	return toTransaction(dto), nil
@@ -174,7 +178,7 @@ func (m *MongoPayer) Refund(ctx context.Context, req *payments.RefundReq) (*paym
 		return nil, err
 	}
 	if dto.CardNumber == "4000000000003238" {
-		// TODO: think roll back
+		// TODO: think roll back the operation
 		return nil, payments.ErrRefundFailed
 	}
 	return toTransaction(dto), nil
