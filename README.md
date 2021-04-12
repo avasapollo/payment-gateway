@@ -147,6 +147,8 @@ I assumed the amount in the response of the capture endpoint is the difference f
 I assumed the amount in the response of the refund endpoint is the difference from the amount of the captured and what the client has already refunded.
 
 ## Points to improve
-- More e2e tests
-- On the payer layer I would like to handle better the specific edge cases.
+- more e2e tests
+- on the payer layer I would like to handle better the specific edge cases
+- when the application authorize the transaction it should crypt the credit card
+- client authentication in the header of the request add the client_id and the client_secret to identify the merchant
 
